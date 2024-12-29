@@ -2,9 +2,9 @@
     "name": "cmsmaxinc/filament-error-pages",
     "description": "Users don’t see blank 404 or 503 error pages. Instead, it shows helpful messages or guides them when something goes wrong.",
     "keywords": [
-        "cmsmaxinc",
         "laravel",
-        "filament-error-pages"
+        "filament-error-pages",
+        "error-pages"
     ],
     "homepage": "https://github.com/cmsmaxinc/filament-error-pages",
     "support": {
@@ -14,9 +14,7 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "CMS Max",
-            "email": "-",
-            "role": "Developer"
+            "name": "CMS Max"
         }
     ],
     "require": {
