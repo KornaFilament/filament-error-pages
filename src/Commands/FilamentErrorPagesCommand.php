@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Cmsmaxinc\FilamentErrorPages\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentErrorPagesCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-error-pages';
 
     public $description = 'My command';
 
