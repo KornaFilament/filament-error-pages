@@ -2,6 +2,7 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use App\Http\Middleware\CustomErrorMiddleware;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -14,7 +15,9 @@ class FilamentErrorPagesPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        //
+        $panel->middleware([
+            CustomErrorMiddleware::class,
+        ]);
     }
 
     public function boot(Panel $panel): void
