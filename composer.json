@@ -32,17 +32,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Cmsmaxinc\\FilamentErrorPages\\": "src/",
-            "Cmsmaxinc\\FilamentErrorPages\\Database\\Factories\\": "database/factories/"
+            "Cmsmaxinc\\FilamentErrorPages\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Cmsmaxinc\\FilamentErrorPages\\Tests\\": "tests/"
         }
     },
     "scripts": {
-        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint"
