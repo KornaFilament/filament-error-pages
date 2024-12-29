@@ -2,6 +2,8 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use Cmsmaxinc\FilamentErrorPages\Commands\FilamentErrorPagesCommand;
+use Cmsmaxinc\FilamentErrorPages\Testing\TestsFilamentErrorPages;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
@@ -13,8 +15,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Cmsmaxinc\FilamentErrorPages\Commands\FilamentErrorPagesCommand;
-use Cmsmaxinc\FilamentErrorPages\Testing\TestsFilamentErrorPages;
 
 class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 {
