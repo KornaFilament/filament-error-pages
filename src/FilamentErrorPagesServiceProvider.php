@@ -60,7 +60,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                  * The current panel is null "filament()->getCurrentPanel()", so we're deriving the panel name from the request path.
                  * A more robust solution is needed in the future.
                  */
-                $path = str(request()->path());
+                $path = str($request->path());
                 $panelName = $path->before('/')->value();
                 $tenantId = $path->match('/\d+/')->value();
                 $panel = filament()->getPanel($panelName);
@@ -71,7 +71,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 }
 
                 // Check if the previous request was redirected to the woops page
-                $isRedirected = request()->url() === route(
+                $isRedirected = $request->url() === route(
                     'filament.' . $panel->getId() . '.pages.woops',
                     filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
                 );
