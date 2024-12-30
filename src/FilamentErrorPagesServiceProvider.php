@@ -4,6 +4,8 @@ namespace Cmsmaxinc\FilamentErrorPages;
 
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\App;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -51,24 +53,37 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
     protected function registerCustomErrorHandler(): void
     {
         app(ExceptionHandler::class)
-            ->renderable(function (Throwable $e, $request) {
-                /*
-                 * TODO: This is a temporary solution, we need to find a better way to handle this
-                 * But we are getting null from filament()->getCurrentPanel()
-                 * So we are using the request path to get the panel name
+            ->renderable(function (Throwable $exception, $request) {
+                /**
+                 * Temporary solution to grab the panel name from the request path.
+                 * The current panel is null "filament()->getCurrentPanel()", so we're deriving the panel name from the request path.
+                 * A more robust solution is needed in the future.
                  */
-
-                $panelName = str(request()->path())->before('/')->value();
-                $tenant = str(request()->path())->match('/\d+/')->value();
+                $path = str(request()->path());
+                $panelName = $path->before('/')->value();
+                $tenantId = $path->match('/\d+/')->value();
                 $panel = filament()->getPanel($panelName);
 
-                if (array_key_exists($panelName, filament()->getPanels())) {
+                // Set the current panel if it exists in the available panels
+                if (filament()->getPanels()[$panelName] ?? false) {
                     filament()->setCurrentPanel($panel);
                 }
 
-                if ($e instanceof NotFoundHttpException) {
-                    if (array_key_exists($panelName, filament()->getPanels())) {
-                        return redirect()->route('filament.' . $panel->getId() . '.pages.woops', filament()->getCurrentPanel()->getTenantModel() ? $tenant : null);
+                // Check if the previous request was redirected to the woops page
+                $isRedirected = request()->url() === route(
+                    'filament.' . $panel->getId() . '.pages.woops',
+                    filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
+                );
+
+                // Handle NotFoundHttpException for panels
+                if ($exception instanceof NotFoundHttpException && ! $isRedirected) {
+                    $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
+
+                    if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
+                        return (new Redirector(App::get('url')))->route(
+                            'filament.' . $panel->getId() . '.pages.woops',
+                            filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
+                        );
                     }
                 }
 
