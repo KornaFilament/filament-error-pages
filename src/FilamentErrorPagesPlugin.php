@@ -2,9 +2,11 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
-use Cmsmaxinc\FilamentErrorPages\Filament\Pages\ErrorPage;
+use Cmsmaxinc\FilamentErrorPages\Filament\Pages\PageNotFoundPage;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
+
+use function filament;
 
 class FilamentErrorPagesPlugin implements Plugin
 {
@@ -16,7 +18,7 @@ class FilamentErrorPagesPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->pages([
-            ErrorPage::class,
+            PageNotFoundPage::class,
         ]);
     }
 

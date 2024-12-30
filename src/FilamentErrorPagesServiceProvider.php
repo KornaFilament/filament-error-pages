@@ -2,6 +2,7 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -36,22 +37,26 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
         if (file_exists($package->basePath('/../resources/views'))) {
             $package->hasViews(static::$viewNamespace);
         }
+
+        $this->registerCustomErrorHandler();
     }
 
     public function packageRegistered(): void {}
 
     public function packageBooted(): void
     {
-        $this->registerCustomErrorHandler();
+        //        $this->registerCustomErrorHandler();
     }
 
     protected function registerCustomErrorHandler(): void
     {
-        app('Illuminate\Contracts\Debug\ExceptionHandler')
+        app(ExceptionHandler::class)
             ->renderable(function (Throwable $e, $request) {
                 if ($e instanceof NotFoundHttpException) {
-                    // TODO: Figure out how to redirect to the error page based on the panel, multi tenancy, etc.
-                    return redirect('admin/error-page');
+                    // TODO: Figure out how to get the current panel ID and user
+                    // dd(auth()->user(), filament()->getCurrentPanel());
+
+                    return redirect('admin/woops'); // redirect to correct page....
                 }
 
                 return null;
