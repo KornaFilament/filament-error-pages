@@ -7,12 +7,12 @@
             <span class="relative z-10">404</span>
         </h1>
 
-        <p class="text-sm mb-2">
+        <p class="text-xl font-semibold mb-2">
             The page you're looking for cannot be found.
         </p>
 
-        <p class="text-xs text-gray-500 mb-6">
-            Current URL: <span class="font-mono">{{ request()->fullUrl() }}</span>
+        <p class="text-xs text-gray-900 mb-6">
+            The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.
         </p>
 
         <div class="flex justify-center gap-4">
