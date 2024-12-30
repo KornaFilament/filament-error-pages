@@ -2,7 +2,6 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
-use Filament\Facades\Filament;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -51,12 +50,8 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
         app('Illuminate\Contracts\Debug\ExceptionHandler')
             ->renderable(function (Throwable $e, $request) {
                 if ($e instanceof NotFoundHttpException) {
-                    // TODO: Grab the real url from the custom error page
-                    return redirect('/admin/error-page');
-                    //                    dd(Filament::getCurrentPanel()->getPages());
-                    //                    redirect()->route('filament.error-pages.404');
-                    //                    dd('Some custom logic for FilamentPHP 404 page');
-                    // TODO: Return the FilamentPHP custom page
+                    // TODO: Figure out how to redirect to the error page based on the panel, multi tenancy, etc.
+                    return redirect('admin/error-page');
                 }
 
                 return null;
