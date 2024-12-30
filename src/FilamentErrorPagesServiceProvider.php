@@ -55,6 +55,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
         app(ExceptionHandler::class)
             ->renderable(function (Throwable $exception, $request) {
                 /**
+                 * https://github.com/filamentphp/filament/pull/15137
                  * Temporary solution to grab the panel name from the request path.
                  * The current panel is null "filament()->getCurrentPanel()", so we're deriving the panel name from the request path.
                  * A more robust solution is needed in the future.
@@ -80,6 +81,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                     $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
 
                     if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
+                        // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
                         return (new Redirector(App::get('url')))->route(
                             'filament.' . $panel->getId() . '.pages.woops',
                             filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
