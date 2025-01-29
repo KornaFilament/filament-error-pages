@@ -2,6 +2,8 @@
 
 This plugin provides a more user-friendly error page for Filament panels when an error occurs. Outside the Filament panel, the default Laravel error page will be displayed.
 
+![thumbnail.png](art/thumbnail.png)
+
 ## Installation
 
 You can install the package via composer:
@@ -23,6 +25,9 @@ Make sure you add the following to your `tailwind.config.js file.
 
 ## How does it work?
 When an error occurs, the plugin will check if the request is coming from a Filament panel. If it is, the custom error page will be displayed. If it is not, the default Laravel error page will be displayed.
+
+#### Why are pages outside the panel not covered?
+The page 
 
 ## What pages are covered?
 The plugin will cover the following error pages:

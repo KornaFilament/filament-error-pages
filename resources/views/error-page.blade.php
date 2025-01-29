@@ -11,7 +11,7 @@
             {{ $this->getTitle() }}
         </p>
 
-        <p class="text-xs text-gray-900 mb-6">
+        <p class="text-xs mb-6">
             {{ $this->getDescription() }}
         </p>
 
