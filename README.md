@@ -26,8 +26,8 @@ Make sure you add the following to your `tailwind.config.js file.
 ## How does it work?
 When an error occurs, the plugin will check if the request is coming from a Filament panel. If it is, the custom error page will be displayed. If it is not, the default Laravel error page will be displayed.
 
-#### Why are pages outside the panel not covered?
-The page 
+#### Are pages outside the panel covered?
+The pages are part of the Filament panel, and the plugin is designed to work within the panel. The plugin will not cover pages outside the panel. For example if your panel base URL is `/admin`, the plugin will cover `/admin/*` but not anything outside of `/admin`.
 
 ## What pages are covered?
 The plugin will cover the following error pages:
