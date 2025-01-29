@@ -2,17 +2,17 @@
     <div class="text-center">
         <h1 class="text-9xl font-black text-center mb-4 relative">
             <span class="absolute text-gray-400 transform -rotate-12 -top-8 -left-6 opacity-50">
-                {{ $this->code }}
+                {{ $this->getCode() }}
             </span>
-            <span class="relative z-10">{{ $this->code }}</span>
+            <span class="relative z-10">{{ $this->getCode() }}</span>
         </h1>
 
         <p class="text-xl font-semibold mb-2">
-            The page you're looking for cannot be found.
+            {{ $this->getTitle() }}
         </p>
 
         <p class="text-xs text-gray-900 mb-6">
-            The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.
+            {{ $this->getDescription() }}
         </p>
 
         <div class="flex justify-center gap-4">
