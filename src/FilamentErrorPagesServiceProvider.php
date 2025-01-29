@@ -2,7 +2,6 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
-use Filament\Facades\Filament;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
@@ -46,7 +45,6 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // TODO: Parse the URL (https://leadpulse.test/company/52/woops) grab the firt part /company/52 and append the /woops to it
         $this->registerCustomErrorHandler();
     }
 
@@ -68,24 +66,32 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 // Set the current panel if it exists in the available panels
                 if (filament()->getPanels()[$panelName] ?? false) {
                     filament()->setCurrentPanel($panel);
-                }
 
-                // Check if the previous request was redirected to the woops page
-                $isRedirected = $request->url() === route(
-                    'filament.' . $panel->getId() . '.pages.woops',
-                    filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
-                );
+                    // Get the plugins of the current panel
+                    $plugins = filament()->getCurrentPanel()->getPlugins();
 
-                // Handle NotFoundHttpException for panels
-                if ($exception instanceof NotFoundHttpException && ! $isRedirected) {
-                    $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
+                    // Check if the FilamentErrorPagesPlugin is used by the current panel
+                    $usedByPanel = collect($plugins)->first(fn ($plugin) => $plugin instanceof FilamentErrorPagesPlugin);
 
-                    if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
-                        // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
-                        return (new Redirector(App::get('url')))->route(
+                    if ($usedByPanel) {
+                        // Check if the previous request was redirected to the woops page
+                        $isRedirected = $request->url() === route(
                             'filament.' . $panel->getId() . '.pages.woops',
                             filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
                         );
+
+                        // Handle NotFoundHttpException for panels
+                        if ($exception instanceof NotFoundHttpException && ! $isRedirected) {
+                            $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
+
+                            if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
+                                // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
+                                return (new Redirector(App::get('url')))->route(
+                                    'filament.' . $panel->getId() . '.pages.woops',
+                                    filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
+                                );
+                            }
+                        }
                     }
                 }
 

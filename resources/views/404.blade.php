@@ -22,7 +22,7 @@
                     Go back to previous page
                 </x-filament::button>
             @endif
-            
+
             <x-filament::button icon="heroicon-s-home" tag="a" color="primary" :href="\Filament\Facades\Filament::getCurrentPanel()->getUrl()">
                 Go back to home
             </x-filament::button>
