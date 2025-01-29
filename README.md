@@ -1,3 +1,33 @@
 # Filament Error Pages
 
-This package is not ready for production and needs testing to more sure it works.
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require cmsmaxinc/filament-error-pages
+```
+
+### Custom Theme
+
+You will need to [create a custom theme](https://filamentphp.com/docs/3.x/panels/themes#creating-a-custom-theme) for the styles to be applied correctly.
+
+
+Make sure you add the following to your `tailwind.config.js file.
+
+```bash
+'./vendor/cmsmaxinc/filament-error-pages/resources/**/*.blade.php',
+```
+
+## Usage
+
+Add the plugin to the panel where you want to use it. If you have multiple panels, ensure you add it to each one. If any panel is not set up correctly, a default Laravel error page will be displayed.
+
+### Supported Pages
+- 404
+
+```php
+->plugins([
+    FilamentErrorPagesPlugin::make(),
+])
+```
