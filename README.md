@@ -1,5 +1,7 @@
 # Filament Error Pages
 
+This plugin provides a more user-friendly error page for Filament panels when an error occurs. Outside of the Filament panel, the default Laravel error page will be displayed.
+
 ## Installation
 
 You can install the package via composer:
@@ -18,6 +20,9 @@ Make sure you add the following to your `tailwind.config.js file.
 ```bash
 './vendor/cmsmaxinc/filament-error-pages/resources/**/*.blade.php',
 ```
+
+## How does it work?
+When an error occurs, the plugin will check if the request is coming from a Filament panel. If it is, the custom error page will be displayed. If it is not, the default Laravel error page will be displayed.
 
 ## Usage
 

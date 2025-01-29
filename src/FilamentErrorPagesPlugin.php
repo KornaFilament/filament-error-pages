@@ -2,6 +2,7 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use Cmsmaxinc\FilamentErrorPages\Filament\Pages\ForbiddenPage;
 use Cmsmaxinc\FilamentErrorPages\Filament\Pages\PageNotFoundPage;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
@@ -19,6 +20,7 @@ class FilamentErrorPagesPlugin implements Plugin
     {
         $panel->pages([
             PageNotFoundPage::class,
+            ForbiddenPage::class,
         ]);
     }
 

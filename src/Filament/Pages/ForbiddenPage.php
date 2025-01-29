@@ -4,13 +4,13 @@ namespace Cmsmaxinc\FilamentErrorPages\Filament\Pages;
 
 use Filament\Pages\Page;
 
-class PageNotFoundPage extends Page
+class ForbiddenPage extends Page
 {
-    public string $code = '404';
+    public string $code = '403';
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $slug = '404';
+    protected static ?string $slug = '403';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 

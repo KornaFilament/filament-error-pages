@@ -2,9 +2,9 @@
     <div class="text-center">
         <h1 class="text-9xl font-black text-center mb-4 relative">
             <span class="absolute text-gray-400 transform -rotate-12 -top-8 -left-6 opacity-50">
-                404
+                {{ $this->code }}
             </span>
-            <span class="relative z-10">404</span>
+            <span class="relative z-10">{{ $this->code }}</span>
         </h1>
 
         <p class="text-xl font-semibold mb-2">

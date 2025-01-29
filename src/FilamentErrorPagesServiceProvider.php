@@ -52,6 +52,13 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
     {
         app(ExceptionHandler::class)
             ->renderable(function (Throwable $exception, $request) {
+                $statusCode = $exception->getStatusCode();
+
+                // Currently, we're only handling 403 and 404 status codes
+                if (! in_array($statusCode, [403, 404])) {
+                    return null;
+                }
+
                 /**
                  * https://github.com/filamentphp/filament/pull/15137
                  * Temporary solution to grab the panel name from the request path.
@@ -74,20 +81,22 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                     $usedByPanel = collect($plugins)->first(fn ($plugin) => $plugin instanceof FilamentErrorPagesPlugin);
 
                     if ($usedByPanel) {
-                        // Check if the previous request was redirected to the woops page
+                        $route = 'filament.' . $panel->getId() . '.pages.' . $statusCode;
+
+                        // Check if the previous request was redirected to the error page
                         $isRedirected = $request->url() === route(
-                            'filament.' . $panel->getId() . '.pages.woops',
+                            $route,
                             filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
                         );
 
                         // Handle NotFoundHttpException for panels
-                        if ($exception instanceof NotFoundHttpException && ! $isRedirected) {
+                        if (! $isRedirected) {
                             $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
 
                             if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
                                 // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
                                 return (new Redirector(App::get('url')))->route(
-                                    'filament.' . $panel->getId() . '.pages.woops',
+                                    $route,
                                     filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
                                 );
                             }
