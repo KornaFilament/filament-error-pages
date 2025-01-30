@@ -30,8 +30,6 @@ If you want to customize the translations, you can publish the translations file
 php artisan vendor:publish --tag="filament-error-pages-translations"
 ```
 
-php artisan vendor:publish --tag="filament-2fa-translations"
-
 ## How does it work?
 When an error occurs, the plugin will check if the request is coming from a Filament panel. If it is, the custom error page will be displayed. If it is not, the default Laravel error page will be displayed.
 
