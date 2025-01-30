@@ -23,7 +23,7 @@ Make sure you add the following to your `tailwind.config.js file.
 './vendor/cmsmaxinc/filament-error-pages/resources/**/*.blade.php',
 ```
 
-# Translations
+## Translations
 If you want to customize the translations, you can publish the translations file.
 
 ```bash
