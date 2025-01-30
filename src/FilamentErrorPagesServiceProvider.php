@@ -5,7 +5,6 @@ namespace Cmsmaxinc\FilamentErrorPages;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -79,11 +78,6 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 // Set the current panel if it exists in the available panels
                 if (filament()->getPanels()[$panelName] ?? false) {
                     filament()->setCurrentPanel($panel);
-
-                    // TODO: Check if the user has access to the panel
-                    //                    if (! Auth::check() || ! auth()->user()->canAccessPanel(filament()->getCurrentPanel())) {
-                    //                        return null;
-                    //                    }
 
                     // Get the plugins of the current panel
                     $plugins = filament()->getCurrentPanel()->getPlugins();
