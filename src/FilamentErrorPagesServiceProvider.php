@@ -66,7 +66,6 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
                 /**
                  * https://github.com/filamentphp/filament/pull/15137
-                 * Temporary solution to grab the panel name from the request path.
                  * The current panel is null "filament()->getCurrentPanel()", so we're deriving the panel name from the request path.
                  * A more robust solution is needed in the future.
                  */
