@@ -72,10 +72,9 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 $path = str($request->path());
                 $panelName = $path->before('/')->value();
                 $tenantId = $path->match('/\d+/')->value();
-                $panel = filament()->getPanel($panelName);
 
                 // Set the current panel if it exists in the available panels
-                if (filament()->getPanels()[$panelName] ?? false) {
+                if ($panel = filament()->getPanels()[$panelName] ?? false) {
                     filament()->setCurrentPanel($panel);
 
                     // Get the plugins of the current panel
