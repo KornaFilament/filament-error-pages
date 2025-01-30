@@ -7,11 +7,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class PageNotFoundPage extends Page
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $slug = '404';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament-error-pages::error-page';
 
@@ -22,11 +20,11 @@ class PageNotFoundPage extends Page
 
     public function getTitle(): string | Htmlable
     {
-        return __('The page you\'re looking for cannot be found.');
+        return __('filament-error-pages::error-pages.404.title');
     }
 
     public function getDescription(): string | Htmlable
     {
-        return __('The page you\'re looking for might have been removed, had its name changed, or is temporarily unavailable.');
+        return __('filament-error-pages::error-pages.404.description');
     }
 }

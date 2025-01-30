@@ -16,15 +16,14 @@
         </p>
 
         <div class="flex justify-center gap-4">
-
             @if(url()->previous() != url()->current())
                 <x-filament::button icon="heroicon-o-arrow-uturn-left" tag="a" color="gray" :href="url()->previous()">
-                    Go back to previous page
+                    {{ __('filament-error-pages::error-pages.previous') }}
                 </x-filament::button>
             @endif
 
             <x-filament::button icon="heroicon-s-home" tag="a" color="primary" :href="\Filament\Facades\Filament::getCurrentPanel()->getUrl()">
-                Go back to home
+                {{ __('filament-error-pages::error-pages.home') }}
             </x-filament::button>
         </div>
     </div>

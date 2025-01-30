@@ -7,11 +7,9 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class ForbiddenPage extends Page
 {
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $slug = '403';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static string $view = 'filament-error-pages::error-page';
 
@@ -22,11 +20,11 @@ class ForbiddenPage extends Page
 
     public function getTitle(): string | Htmlable
     {
-        return __('The page you\'re looking for cannot be accessed.');
+        return __('filament-error-pages::error-pages.403.title');
     }
 
     public function getDescription(): string | Htmlable
     {
-        return __('You do not have permission to access the page you\'re looking for.');
+        return __('filament-error-pages::error-pages.403.description');
     }
 }
