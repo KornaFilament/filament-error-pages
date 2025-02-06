@@ -2,6 +2,7 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use Filament\Panel;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
@@ -73,8 +74,18 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 $panelName = $path->before('/')->value();
                 $tenantId = $path->match('/\d+/')->value();
 
+                $panels = filament()->getPanels();
+                $currentPanel = $panels[$panelName] ?? false;
+
+                /*
+                 * If the current panel is not found, we're using the default panel.
+                 * Some people might have a pathless panel, so we're using the default panel in that case.
+                 * If the pathless panel is not the default panel it will still show the default Laravel error page.
+                 */
+                $panel = $currentPanel ?: filament()->getDefaultPanel();
+
                 // Set the current panel if it exists in the available panels
-                if ($panel = filament()->getPanels()[$panelName] ?? false) {
+                if ($panel) {
                     filament()->setCurrentPanel($panel);
 
                     // Get the plugins of the current panel
@@ -94,15 +105,11 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
                         // Handle NotFoundHttpException for panels
                         if (! $isRedirected) {
-                            $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
-
-                            if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
-                                // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
-                                return (new Redirector(App::get('url')))->route(
-                                    $route,
-                                    filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
-                                );
-                            }
+                            // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
+                            return (new Redirector(App::get('url')))->route(
+                                $route,
+                                filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
+                            );
                         }
                     }
                 }
