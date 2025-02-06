@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\App;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class FilamentErrorPagesServiceProvider extends PackageServiceProvider
@@ -103,7 +102,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                             filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
                         );
 
-                        // Handle NotFoundHttpException for panels
+                        // If the previous request was not redirected to the error page, redirect to the error page
                         if (! $isRedirected) {
                             // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
                             return (new Redirector(App::get('url')))->route(
