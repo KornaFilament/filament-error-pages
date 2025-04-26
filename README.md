@@ -83,3 +83,19 @@ For example:
 - `admin/*` will match `admin/dashboard`, `admin/users`, etc.
 - `api/*` will match `api/v1`, `api/v2`, etc.
 - `/` will match the root path
+
+### Restricting to Configured Routes
+
+By default, the plugin will try to detect the panel based on the URL path if no explicit routes are configured. You can restrict the plugin to only show error pages for explicitly configured routes:
+
+```php
+->plugins([
+    FilamentErrorPagesPlugin::make()
+        ->routes([
+            'admin/*',
+        ])
+        ->onlyShowForConfiguredRoutes(),
+])
+```
+
+When restricted to configured routes, the plugin will only handle errors for URLs that match the explicitly configured routes. This is useful when you want to ensure that error pages are only shown for specific routes and not for all URLs that might match a panel's prefix.

@@ -73,8 +73,8 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 // First try to find panel from configured routes
                 $panelName = $this->getPanelFromPath($request->path());
 
-                // If no panel found from routes, fall back to path-based detection
-                if (! $panelName) {
+                // If no panel found from routes and not restricted to configured routes, fall back to path-based detection
+                if (! $panelName && ! $this->shouldOnlyShowForConfiguredRoutes()) {
                     $panelName = $path->before('/')->value();
                 }
 
@@ -114,6 +114,20 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
                 return null;
             });
+    }
+
+    protected function shouldOnlyShowForConfiguredRoutes(): bool
+    {
+        foreach (filament()->getPanels() as $panel) {
+            $plugins = $panel->getPlugins();
+            $plugin = collect($plugins)->first(fn ($plugin) => $plugin instanceof FilamentErrorPagesPlugin);
+
+            if ($plugin && $plugin->shouldOnlyShowForConfiguredRoutes()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getPanelFromPath(string $path): ?string

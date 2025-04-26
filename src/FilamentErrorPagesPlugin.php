@@ -13,6 +13,8 @@ class FilamentErrorPagesPlugin implements Plugin
 {
     protected array $routes = [];
 
+    protected bool $onlyShowForConfiguredRoutes = false;
+
     public function getId(): string
     {
         return 'filament-error-pages';
@@ -51,5 +53,17 @@ class FilamentErrorPagesPlugin implements Plugin
     public function getRoutes(): array
     {
         return $this->routes;
+    }
+
+    public function onlyShowForConfiguredRoutes(): static
+    {
+        $this->onlyShowForConfiguredRoutes = true;
+
+        return $this;
+    }
+
+    public function shouldOnlyShowForConfiguredRoutes(): bool
+    {
+        return $this->onlyShowForConfiguredRoutes;
     }
 }
