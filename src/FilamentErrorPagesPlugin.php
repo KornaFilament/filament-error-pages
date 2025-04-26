@@ -11,6 +11,8 @@ use function filament;
 
 class FilamentErrorPagesPlugin implements Plugin
 {
+    protected array $routes = [];
+
     public function getId(): string
     {
         return 'filament-error-pages';
@@ -37,5 +39,17 @@ class FilamentErrorPagesPlugin implements Plugin
         $plugin = filament(app(static::class)->getId());
 
         return $plugin;
+    }
+
+    public function routes(array $routes): static
+    {
+        $this->routes = $routes;
+
+        return $this;
+    }
+
+    public function getRoutes(): array
+    {
+        return $this->routes;
     }
 }
