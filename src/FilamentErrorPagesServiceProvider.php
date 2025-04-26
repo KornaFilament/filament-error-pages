@@ -73,7 +73,6 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 // First try to find panel from configured routes
                 $panelName = $this->getPanelFromPath($request->path());
 
-                dd($panelName);
                 // If no panel found from routes, fall back to path-based detection
                 if (! $panelName) {
                     $panelName = $path->before('/')->value();
