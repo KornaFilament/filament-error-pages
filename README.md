@@ -1,5 +1,9 @@
 # Filament Error Pages
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cmsmaxinc/filament-error-pages.svg?style=flat-square)](https://packagist.org/packages/cmsmaxinc/filament-error-pages)
+[![Total Downloads](https://img.shields.io/packagist/dt/cmsmaxinc/filament-error-pages.svg?style=flat-square)](https://packagist.org/packages/cmsmaxinc/filament-error-pages)
+[![License](https://img.shields.io/packagist/l/cmsmaxinc/filament-error-pages.svg?style=flat-square)](https://packagist.org/packages/cmsmaxinc/filament-error-pages)
+
 This plugin provides a more user-friendly error page for Filament panels when an error occurs. Outside the Filament panel, the default Laravel error page will be displayed.
 
 ![thumbnail.png](art/thumbnail.png)
@@ -50,3 +54,32 @@ Add the plugin to the panel where you want to use it. If you have multiple panel
     FilamentErrorPagesPlugin::make(),
 ])
 ```
+
+### Route Configuration
+
+In some cases, especially when your panel doesn't have a clear prefix in the URL (like when it's at the root `/`), the plugin might have trouble detecting which panel should handle the error. In these cases, you can explicitly configure which URL patterns should be handled by each panel:
+
+```php
+->plugins([
+    FilamentErrorPagesPlugin::make()
+        ->routes([
+            'admin/*',    // Will match any path starting with admin/
+            'dashboard/*', // Will match any path starting with dashboard/
+            '/',          // Will match the root path
+            'api/*',      // Will match any path starting with api/
+        ]),
+])
+```
+
+This is particularly useful when:
+- Your panel is mounted at the root URL (`/`)
+- You have multiple panels with overlapping URL patterns
+- You want to ensure specific URL patterns are always handled by a particular panel
+- You have custom routes that don't follow the standard panel prefix pattern
+
+The route patterns support the `*` wildcard which matches any characters.
+
+For example:
+- `admin/*` will match `admin/dashboard`, `admin/users`, etc.
+- `api/*` will match `api/v1`, `api/v2`, etc.
+- `/` will match the root path
