@@ -6,7 +6,7 @@
 
 This plugin provides a more user-friendly error page for Filament panels when an error occurs. Outside the Filament panel, the default Laravel error page will be displayed.
 
-![thumbnail.png](art/thumbnail.png)
+![thumbnail](art/thumbnail.jpg)
 
 ## Installation
 
