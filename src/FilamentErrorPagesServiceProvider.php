@@ -5,11 +5,14 @@ namespace Cmsmaxinc\FilamentErrorPages;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+
+use function filament;
 
 class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 {
@@ -64,14 +67,16 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                     return null;
                 }
 
-                /**
-                 * https://github.com/filamentphp/filament/pull/15137
-                 * The current panel is null "filament()->getCurrentPanel()", so we're deriving the panel name from the request path.
-                 * A more robust solution is needed in the future.
-                 */
                 $path = str($request->path());
-                $panelName = $path->before('/')->value();
                 $tenantId = $path->match('/\d+/')->value();
+
+                // First try to find panel from configured routes
+                $panelName = $this->getPanelFromPath($request->path());
+
+                // If no panel found from routes and not restricted to configured routes, fall back to path-based detection
+                if (! $panelName && ! $this->shouldOnlyShowForConfiguredRoutes()) {
+                    $panelName = $path->before('/')->value();
+                }
 
                 // Set the current panel if it exists in the available panels
                 if ($panel = filament()->getPanels()[$panelName] ?? false) {
@@ -109,6 +114,40 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
                 return null;
             });
+    }
+
+    protected function shouldOnlyShowForConfiguredRoutes(): bool
+    {
+        foreach (filament()->getPanels() as $panel) {
+            $plugins = $panel->getPlugins();
+            $plugin = collect($plugins)->first(fn ($plugin) => $plugin instanceof FilamentErrorPagesPlugin);
+
+            if ($plugin && $plugin->shouldOnlyShowForConfiguredRoutes()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getPanelFromPath(string $path): ?string
+    {
+        foreach (filament()->getPanels() as $panel) {
+            $plugins = $panel->getPlugins();
+            $plugin = collect($plugins)->first(fn ($plugin) => $plugin instanceof FilamentErrorPagesPlugin);
+
+            if ($plugin) {
+                $routes = $plugin->getRoutes();
+
+                foreach ($routes as $pattern) {
+                    if (Str::is($pattern, $path)) {
+                        return $panel->getId();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     protected function getAssetPackageName(): ?string
