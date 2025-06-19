@@ -18,12 +18,12 @@ class ForbiddenPage extends Page
         return '403';
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         return __('filament-error-pages::error-pages.403.title');
     }
 
-    public function getDescription(): string|Htmlable
+    public function getDescription(): string | Htmlable
     {
         return __('filament-error-pages::error-pages.403.description');
     }

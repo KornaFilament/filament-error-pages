@@ -18,12 +18,12 @@ class PageNotFoundPage extends Page
         return '404';
     }
 
-    public function getTitle(): string|Htmlable
+    public function getTitle(): string | Htmlable
     {
         return __('filament-error-pages::error-pages.404.title');
     }
 
-    public function getDescription(): string|Htmlable
+    public function getDescription(): string | Htmlable
     {
         return __('filament-error-pages::error-pages.404.description');
     }
