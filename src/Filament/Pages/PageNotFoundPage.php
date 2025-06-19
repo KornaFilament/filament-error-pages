@@ -11,7 +11,7 @@ class PageNotFoundPage extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $view = 'filament-error-pages::error-page';
+    protected string $view = 'filament-error-pages::error-page';
 
     public function getCode(): string
     {

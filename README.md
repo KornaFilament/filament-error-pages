@@ -18,13 +18,13 @@ composer require cmsmaxinc/filament-error-pages
 
 ### Custom Theme
 
-You will need to [create a custom theme](https://filamentphp.com/docs/3.x/panels/themes#creating-a-custom-theme) for the styles to be applied correctly.
+You will need to [create a custom theme](https://filamentphp.com/docs/4.x/styling/overview#creating-a-custom-theme) for the styles to be applied correctly.
 
 
-Make sure you add the following to your `tailwind.config.js file.
+Make sure you add the following to your `theme.css` file you created for the theme.
 
 ```bash
-'./vendor/cmsmaxinc/filament-error-pages/resources/**/*.blade.php',
+@source '../../../../vendor/cmsmaxinc/filament-error-pages/resources/**/*.blade.php';
 ```
 
 ## Translations
