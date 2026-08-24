@@ -14,6 +14,8 @@ class TenantRouteParameterResolverTestTenant extends Model
     }
 }
 
+class TenantRouteParameterResolverTestTenantWithConfiguredSlug extends Model {}
+
 function tenantPanel(): Panel
 {
     return Panel::make()
@@ -52,6 +54,14 @@ it('resolves tenant route keys from subdomains', function () {
         ->toBe('acme-co');
 });
 
+it('resolves full tenant domains containing dots', function () {
+    $panel = tenantPanel()->tenantDomain('{tenant}');
+    $request = Request::create('https://acme.example.test/admin/missing-page');
+
+    expect(app(TenantRouteParameterResolver::class)->resolve($request, $panel))
+        ->toBe('acme.example.test');
+});
+
 it('uses an already-bound tenant before inspecting the URL', function () {
     $request = Request::create('/admin/path-tenant/known-page');
     $route = (new Route(['GET'], 'admin/{tenant}/known-page', fn (): null => null))
@@ -75,6 +85,26 @@ it('uses the route key of an already-bound tenant model', function () {
 
     expect(app(TenantRouteParameterResolver::class)->resolve($request, tenantPanel()))
         ->toBe('bound-tenant');
+});
+
+it('uses the configured slug attribute of an already-bound tenant model', function () {
+    $tenant = new TenantRouteParameterResolverTestTenantWithConfiguredSlug;
+    $tenant->id = 42;
+    $tenant->slug = 'configured-slug';
+
+    $route = (new Route(['GET'], 'admin/known-page', fn (): null => null))
+        ->bind(Request::create('/admin/known-page'));
+    $route->setParameter('tenant', $tenant);
+
+    $request = Request::create('/admin/known-page');
+    $request->setRouteResolver(fn (): Route => $route);
+    $panel = Panel::make()
+        ->id('admin')
+        ->path('admin')
+        ->tenant(TenantRouteParameterResolverTestTenantWithConfiguredSlug::class, slugAttribute: 'slug');
+
+    expect(app(TenantRouteParameterResolver::class)->resolve($request, $panel))
+        ->toBe('configured-slug');
 });
 
 it('does not guess a tenant when the configured path or domain does not match', function (Panel $panel, string $url) {

@@ -3,9 +3,11 @@
 namespace Cmsmaxinc\FilamentErrorPages;
 
 use Cmsmaxinc\FilamentErrorPages\Support\TenantRouteParameterResolver;
+use Filament\Panel;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -74,6 +76,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                 // If no panel found from routes and not restricted to configured routes, fall back to path-based detection
                 if (! $panelName && ! $this->shouldOnlyShowForConfiguredRoutes()) {
                     $panelName = filament()->getCurrentPanel()?->getId()
+                        ?? $this->getPanelFromRequest($request)
                         ?? str($request->path())->before('/')->value();
                 }
 
@@ -150,6 +153,65 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
         }
 
         return null;
+    }
+
+    protected function getPanelFromRequest(Request $request): ?string
+    {
+        $panels = collect(filament()->getPanels())
+            ->filter(function (Panel $panel): bool {
+                return collect($panel->getPlugins())
+                    ->contains(fn ($plugin): bool => $plugin instanceof FilamentErrorPagesPlugin);
+            })
+            ->sortByDesc(fn (Panel $panel): int => strlen(trim($panel->getPath(), '/')));
+
+        foreach ($panels as $panel) {
+            $panelPath = trim($panel->getPath(), '/');
+            $requestPath = trim($request->path(), '/');
+
+            if (
+                ($panelPath !== '') &&
+                ($requestPath !== $panelPath) &&
+                (! str_starts_with($requestPath, "{$panelPath}/"))
+            ) {
+                continue;
+            }
+
+            if (! $this->panelDomainMatches($request, $panel)) {
+                continue;
+            }
+
+            if (
+                $panel->hasTenancy() &&
+                (app(TenantRouteParameterResolver::class)->resolve($request, $panel) === null)
+            ) {
+                continue;
+            }
+
+            return $panel->getId();
+        }
+
+        return null;
+    }
+
+    protected function panelDomainMatches(Request $request, Panel $panel): bool
+    {
+        $domains = $panel->getDomains();
+
+        if ($domains === []) {
+            return true;
+        }
+
+        foreach ($domains as $domain) {
+            $route = (new Route(['GET'], '{filamentErrorPagesPath?}', fn (): null => null))
+                ->domain($domain)
+                ->where('filamentErrorPagesPath', '.*');
+
+            if ($route->matches($request, includingMethod: false)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getAssetPackageName(): ?string

@@ -4,8 +4,10 @@ namespace Cmsmaxinc\FilamentErrorPages\Support;
 
 use Filament\Panel;
 use Illuminate\Contracts\Routing\UrlRoutable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
 
 final class TenantRouteParameterResolver
 {
@@ -15,7 +17,7 @@ final class TenantRouteParameterResolver
             return null;
         }
 
-        $routeTenant = $this->normalize($request->route('tenant'));
+        $routeTenant = $this->normalize($request->route('tenant'), $panel);
 
         if ($routeTenant !== null) {
             return $routeTenant;
@@ -32,8 +34,13 @@ final class TenantRouteParameterResolver
     {
         $route = (new Route(['GET'], '{filamentErrorPagesPath?}', fn (): null => null))
             ->domain($panel->getTenantDomain())
-            ->where('filamentErrorPagesPath', '.*')
-            ->bind($request);
+            ->where('filamentErrorPagesPath', '.*');
+
+        if (Str::is(['{tenant}', '{tenant:*}'], $panel->getTenantDomain())) {
+            $route->where('tenant', '[a-z0-9.\-]+');
+        }
+
+        $route->bind($request);
 
         return $this->normalize($route->parameter('tenant'));
     }
@@ -56,9 +63,14 @@ final class TenantRouteParameterResolver
         return $this->normalize($route->parameter('tenant'));
     }
 
-    private function normalize(mixed $tenant): ?string
+    private function normalize(mixed $tenant, ?Panel $panel = null): ?string
     {
-        if ($tenant instanceof UrlRoutable) {
+        if (
+            ($tenant instanceof Model) &&
+            filled($tenantSlugAttribute = $panel?->getTenantSlugAttribute())
+        ) {
+            $tenant = $tenant->getAttributeValue($tenantSlugAttribute);
+        } elseif ($tenant instanceof UrlRoutable) {
             $tenant = $tenant->getRouteKey();
         }
 
