@@ -2,14 +2,15 @@
 
 namespace Cmsmaxinc\FilamentErrorPages;
 
+use Cmsmaxinc\FilamentErrorPages\Support\TenantRouteParameterResolver;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 use function filament;
@@ -54,7 +55,7 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
     protected function registerCustomErrorHandler(): void
     {
         app(ExceptionHandler::class)
-            ->renderable(function (Throwable $exception, $request) {
+            ->renderable(function (Throwable $exception, Request $request) {
                 if (! method_exists($exception, 'getStatusCode')) {
                     return null;
                 }
@@ -67,15 +68,13 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
                     return null;
                 }
 
-                $path = str($request->path());
-                $tenantId = $path->match('/\d+/')->value();
-
                 // First try to find panel from configured routes
                 $panelName = $this->getPanelFromPath($request->path());
 
                 // If no panel found from routes and not restricted to configured routes, fall back to path-based detection
                 if (! $panelName && ! $this->shouldOnlyShowForConfiguredRoutes()) {
-                    $panelName = $path->before('/')->value();
+                    $panelName = filament()->getCurrentPanel()?->getId()
+                        ?? str($request->path())->before('/')->value();
                 }
 
                 // Set the current panel if it exists in the available panels
@@ -90,24 +89,27 @@ class FilamentErrorPagesServiceProvider extends PackageServiceProvider
 
                     if ($usedByPanel) {
                         $route = 'filament.' . $panel->getId() . '.pages.' . $statusCode;
+                        $parameters = [];
+
+                        if ($panel->hasTenancy()) {
+                            $tenant = app(TenantRouteParameterResolver::class)->resolve($request, $panel);
+
+                            if ($tenant === null) {
+                                return null;
+                            }
+
+                            $parameters['tenant'] = $tenant;
+                        }
+
+                        $errorPageUrl = route($route, $parameters);
 
                         // Check if the previous request was redirected to the error page
-                        $isRedirected = $request->url() === route(
-                            $route,
-                            filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
-                        );
+                        $isRedirected = $request->url() === $errorPageUrl;
 
-                        // Handle NotFoundHttpException for panels
+                        // Redirect to the panel error page unless the request is already there.
                         if (! $isRedirected) {
-                            $isDefaultPanel = filament()->getCurrentPanel()->getId() === filament()->getDefaultPanel()->getId();
-
-                            if (filament()->getPanels()[$panelName] ?? $isDefaultPanel) {
-                                // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
-                                return (new Redirector(App::get('url')))->route(
-                                    $route,
-                                    filament()->getCurrentPanel()->getTenantModel() ? $tenantId : null
-                                );
-                            }
+                            // https://github.com/livewire/livewire/discussions/4905#discussioncomment-7115155
+                            return (new Redirector(App::get('url')))->to($errorPageUrl);
                         }
                     }
                 }
