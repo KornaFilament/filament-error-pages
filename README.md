@@ -37,6 +37,8 @@ php artisan vendor:publish --tag="filament-error-pages-translations"
 ## How does it work?
 When an error occurs, the plugin will check if the request is coming from a Filament panel. If it is, the custom error page will be displayed. If it is not, the default Laravel error page will be displayed.
 
+Tenant-aware panels are supported whether their tenant route key is a numeric ID or a slug. The tenant may be part of the path, use a custom tenant route prefix, or be supplied by a tenant domain such as `{tenant:slug}.example.com`.
+
 #### Are pages outside the panel covered?
 The error pages are part of the Filament panel, and the plugin is designed to work within the panel. The plugin will not cover pages outside the panel. For example if your panel base URL is `/admin`, the plugin will cover `/admin/*` but not anything outside of `/admin`.
 
